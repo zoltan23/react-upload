@@ -4,12 +4,12 @@ import firebase from 'firebase'
 import { storage } from './firebase-config'
 
 function App() {
-
+ 
   console.log("storage", storage);
 
-  const [filename, setFilename] = useState('')
+  const [progress, setProgress] = useState(0)
 
- const handleImageUpload = e => {
+ const handleChange = e => {
     e.preventDefault();
     console.log("fileselected triggered", e.target.files[0]);
     var file = e.target.files[0];
@@ -23,11 +23,11 @@ function App() {
     //Update progress bar
     task.on('state_changed', 
         
-    // function progress(snapshot) {
-    //     var percentage = (snapshot.bytesTransferred /
-    //     snapshot.totalBytes ) * 100;
-    //     uploader.value = percentage;
-    // },
+    function progress(snapshot) {
+        var percentage = (snapshot.bytesTransferred /
+        snapshot.totalBytes ) * 100;
+        setProgress(percentage);
+    },
 
     function error(err) {
         console.log("error uploading file", err);
@@ -36,12 +36,20 @@ function App() {
     function complete() {
         console.log("upload complete");
     }
-  );       
-
+  );   
+  
+  
   }
+
+  const fileUploadHandler = () => {
+    console.log("file uploader button fired")
+  }
+
   return (
     <div className="App">
-      <input type="file" onChange={handleImageUpload}/>
+      <progress value={progress} max="100" id="uploader">0%</progress>
+      <input type="file" onChange={handleChange}/>
+      <button onClick={fileUploadHandler}>Upload</button>
     </div>
   );
 }
